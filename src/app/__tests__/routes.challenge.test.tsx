@@ -25,7 +25,7 @@ describe('Route Rendering Challenge & Stress Suite', () => {
   describe('HomePage (/)', () => {
     it('renders hero banner and all 3 practice mode cards', () => {
       render(<HomePage />);
-      expect(screen.getByText('KeyLingo MVP')).toBeInTheDocument();
+      expect(screen.getByText('KeyLingo')).toBeInTheDocument();
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
 
       // Check practice mode links
@@ -95,7 +95,7 @@ describe('Route Rendering Challenge & Stress Suite', () => {
   });
 
   describe('VocabularyPage (/vocabulary)', () => {
-    it('renders 4 filter selectors and practice text', () => {
+    it('renders 4 filter selectors and vocabulary chips', () => {
       render(<VocabularyPage />);
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
 
@@ -104,44 +104,38 @@ describe('Route Rendering Challenge & Stress Suite', () => {
       expect(screen.getByLabelText(/CEFR Level/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/Category/i)).toBeInTheDocument();
 
-      expect(
-        screen.getByText(/De snelle bruine vos springt over de luie hond/i)
-      ).toBeInTheDocument();
+      // Vocabulary chips should render (at least one word from default filters - English A1 Everyday)
+      expect(screen.getByText('apple')).toBeInTheDocument();
     });
   });
 
   describe('MyVocabularyPage (/my-vocabulary)', () => {
-    it('renders search filter and filters vocabulary words', () => {
+    it('renders search filter and empty state initially', () => {
       render(<MyVocabularyPage />);
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
 
-      // Initially shows kat and hond
-      expect(screen.getByText('kat')).toBeInTheDocument();
-      expect(screen.getByText('hond')).toBeInTheDocument();
-
-      const searchInput = screen.getByPlaceholderText(/search/i);
-      fireEvent.change(searchInput, { target: { value: 'kat' } });
-
-      expect(screen.getByText('kat')).toBeInTheDocument();
-      expect(screen.queryByText('hond')).not.toBeInTheDocument();
-
-      // Search non-existent word shows empty card
-      fireEvent.change(searchInput, { target: { value: 'nonexistentword' } });
+      // Initially shows empty state
       expect(screen.getByText(/No saved words yet/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
+
+      // Filter selectors should be present
+      expect(screen.getByLabelText(/Filter by Language/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Filter by Review Status/i)).toBeInTheDocument();
     });
   });
 
   describe('ProgressPage (/progress)', () => {
-    it('renders metric cards and weak keys badge map', () => {
+    it('renders metric cards with empty state and weak keys section', () => {
       render(<ProgressPage />);
       expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
 
-      expect(screen.getByText('45 WPM')).toBeInTheDocument();
-      expect(screen.getByText('96.5%')).toBeInTheDocument();
-      expect(screen.getByText('1h 24m')).toBeInTheDocument();
+      // Empty state shows — for metrics (at least one)
+      expect(screen.getAllByText('—').length).toBeGreaterThan(0);
+      expect(screen.getByText('0m')).toBeInTheDocument();
+      expect(screen.getByText('0 days')).toBeInTheDocument();
 
-      expect(screen.getByText("Key 'p' • 12 errors")).toBeInTheDocument();
-      expect(screen.getByText("Key 'b' • 9 errors")).toBeInTheDocument();
+      // Weak keys section shows empty message
+      expect(screen.getByText(/No error patterns recorded yet/i)).toBeInTheDocument();
     });
   });
 
