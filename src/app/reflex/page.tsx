@@ -13,6 +13,7 @@ import { Select } from '@/components/ui/Select';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { usePreferences } from '@/hooks/usePreferences';
+import { useProgress } from '@/hooks/useProgress';
 import { getLocaleStrings } from '@/lib/locale';
 import { Play, RotateCcw, Pause, Dices } from 'lucide-react';
 import { useTypingSession } from '@/hooks/useTypingSession';
@@ -34,6 +35,7 @@ import type {
 
 export default function ReflexPage() {
   const { preferences } = usePreferences();
+  const { stats } = useProgress();
   const strings = getLocaleStrings(preferences.interfaceLanguage || 'en');
 
   // Configurator state
@@ -52,11 +54,8 @@ export default function ReflexPage() {
     }
   }, [preferences.keyboardLayout]);
 
-  // Load adaptive weak keys from persisted UserStats
-  const userStats = useMemo<UserStats>(() => {
-    if (!adaptive) return DEFAULT_STATS;
-    return persistenceService.load<UserStats>(STORAGE_KEYS.STATS) ?? DEFAULT_STATS;
-  }, [adaptive]);
+  // Use reactive stats from useProgress hook (cross-tab sync, real-time updates)
+  const adaptiveData = adaptive ? stats.perKeyErrors : undefined;
 
   // Pure deterministic drill text generation
   const drillText = useMemo(() => {
@@ -65,15 +64,15 @@ export default function ReflexPage() {
       length,
       difficulty,
       layoutId: layout,
-      adaptiveData: adaptive ? userStats.perKeyErrors : undefined,
+      adaptiveData,
     });
-  }, [seed, length, difficulty, layout, adaptive, userStats.perKeyErrors]);
+  }, [seed, length, difficulty, layout, adaptiveData]);
 
   const language: LanguageCode =
     layout === 'arabic-101' ? 'ar' : layout === 'us-international' ? 'nl' : 'en';
 
   const handleSessionComplete = (finalMetrics: TypingMetrics) => {
-    // Record error key metrics into persistent UserStats
+    // Record error key metrics into persistent UserStats via useProgress
     const prevStats = persistenceService.load<UserStats>(STORAGE_KEYS.STATS) ?? DEFAULT_STATS;
     const updatedPerKeyErrors = { ...prevStats.perKeyErrors };
     for (const [key, count] of Object.entries(finalMetrics.perKeyErrors)) {
