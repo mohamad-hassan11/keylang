@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
 import { usePreferences } from '@/hooks/usePreferences';
 import { useProgress } from '@/hooks/useProgress';
+import { useIsMobile } from '@/hooks/useDeviceType';
 import { getLocaleStrings } from '@/lib/locale';
 import { Play, RotateCcw, Pause, Dices } from 'lucide-react';
 import { useTypingSession } from '@/hooks/useTypingSession';
@@ -22,6 +23,7 @@ import { TypingDisplay } from '@/components/typing/TypingDisplay';
 import { MetricsBar } from '@/components/typing/MetricsBar';
 import { ResultsCard } from '@/components/typing/ResultsCard';
 import { VirtualKeyboard } from '@/components/keyboard/VirtualKeyboard';
+import { MobileRestriction } from '@/components/layout/MobileRestriction';
 import { generateReflexExercise } from '@/generators/reflex-generator';
 import { persistenceService } from '@/services/persistence';
 import { STORAGE_KEYS, DEFAULT_STATS } from '@/lib/constants';
@@ -34,6 +36,10 @@ import type {
 } from '@/lib/types';
 
 export default function ReflexPage() {
+  const isMobile = useIsMobile();
+  if (isMobile) {
+    return <MobileRestriction />;
+  }
   const { preferences } = usePreferences();
   const { stats } = useProgress();
   const strings = getLocaleStrings(preferences.interfaceLanguage || 'en');

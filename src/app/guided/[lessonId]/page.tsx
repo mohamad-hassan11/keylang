@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { usePreferences } from '@/hooks/usePreferences';
 import { useProgress } from '@/hooks/useProgress';
 import { useTypingSession } from '@/hooks/useTypingSession';
+import { useIsMobile } from '@/hooks/useDeviceType';
 import { getLocaleStrings } from '@/lib/locale';
 import { getLessonById, qwertyUsLessons, allLessonsByLayout } from '@/content/lessons';
 import { getNextLessonId, type LessonEvaluationResult } from '@/generators/guided-curriculum';
@@ -17,10 +18,15 @@ import { TypingDisplay } from '@/components/typing/TypingDisplay';
 import { MetricsBar } from '@/components/typing/MetricsBar';
 import { ResultsCard } from '@/components/typing/ResultsCard';
 import { VirtualKeyboard } from '@/components/keyboard/VirtualKeyboard';
+import { MobileRestriction } from '@/components/layout/MobileRestriction';
 import { ArrowLeft, RotateCcw, Play, Pause, ArrowRight, CheckCircle2 } from 'lucide-react';
 import type { LanguageCode, TypingMetrics } from '@/lib/types';
 
 export default function LessonPracticePage() {
+  const isMobile = useIsMobile();
+  if (isMobile) {
+    return <MobileRestriction />;
+  }
   const params = useParams();
   const rawId = (params?.lessonId as string) || '1';
 

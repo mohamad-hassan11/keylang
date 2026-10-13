@@ -22,6 +22,8 @@ import { ResultsCard } from '@/components/typing/ResultsCard';
 import { VirtualKeyboard } from '@/components/keyboard/VirtualKeyboard';
 import { WordChip } from '@/components/vocabulary/WordChip';
 import { TranslationPanel } from '@/components/vocabulary/TranslationPanel';
+import { MobileRestriction } from '@/components/layout/MobileRestriction';
+import { useIsMobile } from '@/hooks/useDeviceType';
 import { getVocabulary } from '@/content/vocabulary';
 import { offlineTranslationProvider } from '@/services/translation';
 import { persistenceService } from '@/services/persistence';
@@ -38,6 +40,10 @@ import type {
 } from '@/lib/types';
 
 export default function VocabularyPage() {
+  const isMobile = useIsMobile();
+  if (isMobile) {
+    return <MobileRestriction />;
+  }
   const { preferences } = usePreferences();
   const strings = getLocaleStrings(preferences.interfaceLanguage || 'en');
 
