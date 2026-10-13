@@ -1,10 +1,12 @@
 import type { Lesson } from '@/lib/types';
 import { qwertyUsLessons } from './qwerty-us';
 import { arabic101Lessons } from './arabic-101';
+import { dutchGuidedLessons } from './dutch-guided';
 
 export const allLessonsByLayout: Readonly<Record<string, readonly Lesson[]>> = {
   'qwerty-us': qwertyUsLessons,
   'arabic-101': arabic101Lessons,
+  'us-international': dutchGuidedLessons,
 };
 
 export function getLessonsByLayout(layoutId: string): readonly Lesson[] {
