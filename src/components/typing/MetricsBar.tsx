@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { memo } from 'react';
 import type { SessionStatus } from '@/lib/types';
 import { Badge } from '@/components/ui/Badge';
+import { LiveNumber, LiveProgressBar } from './LiveMetrics';
 
 export interface MetricsBarProps {
   readonly grossWpm: number;
@@ -26,7 +27,7 @@ export function formatElapsedTime(ms: number): string {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
-export const MetricsBar: React.FC<MetricsBarProps> = ({
+export const MetricsBar = memo(function MetricsBar({
   grossWpm,
   netWpm,
   accuracy,
@@ -34,7 +35,7 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
   status,
   uncorrectedErrors = 0,
   className = '',
-}) => {
+}: MetricsBarProps) {
   const statusBadges: Record<
     SessionStatus,
     { label: string; variant: 'outline' | 'accent' | 'warning' | 'success' }
@@ -59,9 +60,7 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Net WPM
           </span>
-          <span className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-foreground">
-            {Math.round(netWpm)}
-          </span>
+          <LiveNumber value={Math.round(netWpm)} className="text-2xl sm:text-3xl font-bold font-mono tabular-nums text-foreground" />
         </div>
 
         {/* Gross WPM */}
@@ -69,9 +68,7 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Gross WPM
           </span>
-          <span className="text-xl sm:text-2xl font-semibold font-mono tabular-nums text-muted-foreground">
-            {Math.round(grossWpm)}
-          </span>
+          <LiveNumber value={Math.round(grossWpm)} className="text-xl sm:text-2xl font-semibold font-mono tabular-nums text-muted-foreground" />
         </div>
 
         {/* Accuracy */}
@@ -79,15 +76,12 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Accuracy
           </span>
-          <span
-            className={`text-xl sm:text-2xl font-semibold font-mono tabular-nums ${
-              accuracy >= 95
-                ? 'text-emerald-600 dark:text-emerald-400'
-                : 'text-amber-600 dark:text-amber-400'
-            }`}
-          >
-            {accuracy === 100 ? '100%' : `${accuracy.toFixed(1)}%`}
-          </span>
+          <LiveNumber value={accuracy} decimals={1} suffix="%" className={`text-xl sm:text-2xl font-semibold font-mono tabular-nums ${
+            accuracy >= 95
+              ? 'text-emerald-600 dark:text-emerald-400'
+              : 'text-amber-600 dark:text-amber-400'
+          }`} />
+          <LiveProgressBar value={accuracy} color="success" className="mt-1 w-32" />
         </div>
 
         {/* Elapsed Time */}
@@ -104,14 +98,14 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
       {/* Status Badge & Uncorrected Errors */}
       <div className="flex items-center gap-3">
         {uncorrectedErrors > 0 && (
-          <Badge variant="error" size="sm">
+          <Badge variant="error" size="sm" className="animate-fade-in">
             {uncorrectedErrors} uncorrected
           </Badge>
         )}
-        <Badge variant={currentBadge.variant} size="md">
+        <Badge variant={currentBadge.variant} size="md" className="animate-pulse-soft">
           {currentBadge.label}
         </Badge>
       </div>
     </div>
   );
-};
+});

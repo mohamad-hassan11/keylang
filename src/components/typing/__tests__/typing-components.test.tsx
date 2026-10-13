@@ -243,7 +243,7 @@ describe('MetricsBar Component', () => {
   });
 
   it('renders all metrics HUD items and status badge correctly', () => {
-    render(
+    const { container } = render(
       <MetricsBar
         grossWpm={45}
         netWpm={42}
@@ -254,12 +254,12 @@ describe('MetricsBar Component', () => {
       />
     );
 
-    expect(screen.getByText('42')).toBeDefined(); // Net WPM
-    expect(screen.getByText('45')).toBeDefined(); // Gross WPM
-    expect(screen.getByText('98.5%')).toBeDefined(); // Accuracy
-    expect(screen.getByText('01:05')).toBeDefined(); // Time
-    expect(screen.getByText('Typing')).toBeDefined(); // Active status
-    expect(screen.getByText('1 uncorrected')).toBeDefined();
+    expect(container.textContent).toMatch(/42/); // Net WPM
+    expect(container.textContent).toMatch(/45/); // Gross WPM
+    expect(container.textContent).toMatch(/98\.5%/); // Accuracy
+    expect(container.textContent).toMatch(/01:05/); // Time
+    expect(container.textContent).toMatch(/Typing/); // Active status
+    expect(container.textContent).toMatch(/1 uncorrected/);
   });
 });
 
@@ -274,11 +274,11 @@ describe('ResultsCard Component', () => {
     perKeyErrors: { e: 2, t: 1 },
   };
 
-  it('renders performance summary, weak keys, and action buttons', () => {
+  it('renders performance summary, weak keys, and action buttons', async () => {
     const onRestart = vi.fn();
     const onNext = vi.fn();
 
-    render(
+    const { container } = render(
       <ResultsCard
         metrics={mockMetrics}
         onRestart={onRestart}
@@ -286,11 +286,30 @@ describe('ResultsCard Component', () => {
       />
     );
 
-    expect(screen.getByText('47')).toBeDefined(); // Net WPM rounded
-    expect(screen.getByText('95.5%')).toBeDefined();
-    expect(screen.getByText('00:45')).toBeDefined();
-    expect(screen.getByText("'e': 2 errors")).toBeDefined();
-    expect(screen.getByText("'t': 1 error")).toBeDefined();
+    // Wait for animated numbers to complete (max 800ms duration + buffer)
+    await vi.waitFor(
+      () => {
+        expect(container.textContent).toMatch(/47/); // Net WPM rounded
+      },
+      { timeout: 2000 }
+    );
+
+    await vi.waitFor(
+      () => {
+        expect(container.textContent).toMatch(/95\.5%/);
+      },
+      { timeout: 2000 }
+    );
+
+    await vi.waitFor(
+      () => {
+        expect(container.textContent).toMatch(/00:45/);
+      },
+      { timeout: 2000 }
+    );
+
+    expect(container.textContent).toMatch(/'e': 2 errors/);
+    expect(container.textContent).toMatch(/'t': 1 error/);
 
     const restartBtn = screen.getByRole('button', { name: /restart/i });
     fireEvent.click(restartBtn);

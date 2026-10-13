@@ -44,18 +44,18 @@ export const Dialog: React.FC<DialogProps> = ({
       aria-modal="true"
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descId : undefined}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs animate-fade-in"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Modal Container */}
       <div
-        className={`relative z-10 w-full max-w-lg rounded-2xl bg-card p-6 text-card-foreground shadow-2xl border border-border max-h-[90vh] overflow-y-auto ${className}`}
+        className={`relative z-10 w-full max-w-lg rounded-2xl bg-card p-6 text-card-foreground shadow-2xl border border-border max-h-[90vh] overflow-y-auto animate-scale-in ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -79,7 +79,7 @@ export const Dialog: React.FC<DialogProps> = ({
             {description}
           </p>
         )}
-        <div className="mt-4">{children}</div>
+        <div className="mt-4 animate-fade-in" style={{ animationDelay: '100ms' }}>{children}</div>
       </div>
     </div>
   );

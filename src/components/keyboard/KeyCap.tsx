@@ -52,7 +52,7 @@ export function KeyCap({
   const stateStyles: Record<KeyVisualState, string> = {
     idle: 'bg-card border-border text-foreground hover:bg-muted/80 shadow-xs',
     target: 'bg-primary text-primary-foreground border-primary font-bold shadow-md ring-2 ring-primary/40 scale-[1.02]',
-    pressed: 'bg-primary/80 text-primary-foreground border-primary translate-y-0.5 shadow-inner scale-[0.98]',
+    pressed: 'bg-primary/80 text-primary-foreground border-primary translate-y-0.5 shadow-inner scale-[0.98] animate-key-press',
     error: 'bg-destructive/20 border-destructive text-destructive font-bold animate-pulse',
     'modifier-target': 'bg-primary/20 text-primary border-primary font-semibold ring-2 ring-primary/30',
   };

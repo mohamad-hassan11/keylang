@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, memo } from 'react';
 import type { TypingMetrics } from '@/lib/types';
 import {
   Card,
@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { formatElapsedTime } from './MetricsBar';
+import { AnimatedNumber, AnimatedProgressBar } from './AnimatedMetrics';
 
 export interface ResultsCardProps {
   readonly metrics: TypingMetrics;
@@ -23,14 +24,14 @@ export interface ResultsCardProps {
   readonly className?: string;
 }
 
-export const ResultsCard: React.FC<ResultsCardProps> = ({
+export const ResultsCard = memo(function ResultsCard({
   metrics,
   onRestart,
   onNext,
   title = 'Session Complete!',
   description = 'Great job! Review your performance metrics below.',
   className = '',
-}) => {
+}: ResultsCardProps) {
   // Shortcut: Enter key triggers onNext (or onRestart)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -50,7 +51,7 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
   const errorKeyEntries = Object.entries(metrics.perKeyErrors).sort((a, b) => b[1] - a[1]);
 
   return (
-    <Card variant="elevated" padding="lg" className={`w-full max-w-xl mx-auto shadow-xl ${className}`}>
+    <Card variant="elevated" padding="lg" className={`w-full max-w-xl mx-auto shadow-xl animate-slide-up ${className}`}>
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-center">{title}</CardTitle>
         <CardDescription className="text-center">{description}</CardDescription>
@@ -62,16 +63,16 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase">Net Speed</div>
             <div className="text-3xl font-extrabold font-mono text-primary mt-1">
-              {Math.round(metrics.netWpm)}
-              <span className="text-sm font-normal text-muted-foreground ms-1">WPM</span>
+              <AnimatedNumber value={Math.round(metrics.netWpm)} suffix="WPM" duration={800} />
             </div>
           </div>
 
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase">Accuracy</div>
             <div className="text-3xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-1">
-              {metrics.accuracy === 100 ? '100%' : `${metrics.accuracy.toFixed(1)}%`}
+              <AnimatedNumber value={metrics.accuracy} decimals={1} suffix="%" duration={800} />
             </div>
+            <AnimatedProgressBar value={metrics.accuracy} color="success" className="mt-2" />
           </div>
 
           <div>
@@ -86,17 +87,17 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
         <div className="grid grid-cols-3 gap-2 text-sm text-center">
           <div className="p-2.5 rounded-lg border border-border bg-card">
             <span className="text-muted-foreground block text-xs">Gross Speed</span>
-            <span className="font-semibold font-mono text-base">{Math.round(metrics.grossWpm)} WPM</span>
+            <AnimatedNumber value={Math.round(metrics.grossWpm)} suffix="WPM" duration={600} className="font-mono text-base" />
           </div>
 
           <div className="p-2.5 rounded-lg border border-border bg-card">
             <span className="text-muted-foreground block text-xs">Total Errors</span>
-            <span className="font-semibold font-mono text-base">{metrics.errorCount}</span>
+            <AnimatedNumber value={metrics.errorCount} duration={500} className="font-mono text-base" />
           </div>
 
           <div className="p-2.5 rounded-lg border border-border bg-card">
             <span className="text-muted-foreground block text-xs">Uncorrected</span>
-            <span className="font-semibold font-mono text-base">{metrics.uncorrectedErrors}</span>
+            <AnimatedNumber value={metrics.uncorrectedErrors} duration={500} className="font-mono text-base" />
           </div>
         </div>
 
@@ -106,13 +107,13 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
             Key Accuracy Breakdown
           </h4>
           {errorKeyEntries.length === 0 ? (
-            <Badge variant="success" size="md">
+            <Badge variant="success" size="md" className="animate-fade-in">
               Flawless! Zero errors recorded
             </Badge>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {errorKeyEntries.slice(0, 6).map(([key, count]) => (
-                <Badge key={key} variant="error" size="sm">
+              {errorKeyEntries.slice(0, 6).map(([key, count], idx) => (
+                <Badge key={key} variant="error" size="sm" className="animate-slide-up" style={{ animationDelay: `${idx * 50}ms` }}>
                   '{key === ' ' ? 'Space' : key}': {count} {count === 1 ? 'error' : 'errors'}
                 </Badge>
               ))}
@@ -121,7 +122,7 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
         </div>
       </CardContent>
 
-      <CardFooter className="flex items-center justify-end gap-3 border-t border-border pt-4">
+      <CardFooter className="flex items-center justify-end gap-3 border-t border-border pt-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
         <Button variant="outline" size="md" onClick={onRestart}>
           Restart (Tab+Enter)
         </Button>
@@ -133,4 +134,4 @@ export const ResultsCard: React.FC<ResultsCardProps> = ({
       </CardFooter>
     </Card>
   );
-};
+});

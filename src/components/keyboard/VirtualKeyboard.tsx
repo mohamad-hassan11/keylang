@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import type { KeyboardLayout, Finger, Hand } from '@/lib/types';
 import { getKeyboardLayout } from '@/content/keyboards';
 import { findKeyForChar } from '@/hooks/useKeyboard';
@@ -19,7 +19,10 @@ export interface VirtualKeyboardProps {
   readonly className?: string;
 }
 
-export function VirtualKeyboard({
+// Memoized KeyCap wrapper to prevent unnecessary re-renders
+const MemoizedKeyCap = memo(KeyCap);
+
+export const VirtualKeyboard = memo(function VirtualKeyboard({
   layout,
   layoutId = 'qwerty-us',
   targetChar,
@@ -47,6 +50,9 @@ export function VirtualKeyboard({
   const currentActiveFinger = activeFinger ?? targetKeyDef?.finger ?? null;
   const currentActiveHand = targetKeyDef?.hand ?? null;
 
+  // Convert pressedKeyCodes to Set for O(1) lookup
+  const pressedKeySet = useMemo(() => new Set(pressedKeyCodes), [pressedKeyCodes]);
+
   return (
     <div
       dir="ltr"
@@ -66,7 +72,7 @@ export function VirtualKeyboard({
               // Determine visual state
               let keyState: KeyVisualState = 'idle';
 
-              if (pressedKeyCodes.includes(key.code)) {
+              if (pressedKeySet.has(key.code)) {
                 keyState = 'pressed';
               } else if (errorKeyCode === key.code) {
                 keyState = 'error';
@@ -79,7 +85,7 @@ export function VirtualKeyboard({
               }
 
               return (
-                <KeyCap
+                <MemoizedKeyCap
                   key={key.code}
                   definition={key}
                   state={keyState}
@@ -101,4 +107,4 @@ export function VirtualKeyboard({
       )}
     </div>
   );
-}
+});

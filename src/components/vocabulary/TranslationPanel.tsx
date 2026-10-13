@@ -77,7 +77,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-fade-in">
       {/* Click outside backdrop to dismiss */}
       <div
         className="fixed inset-0 cursor-pointer"
@@ -90,7 +90,7 @@ export const TranslationPanel: React.FC<TranslationPanelProps> = ({
         role="dialog"
         aria-label={`Translation for ${word}`}
         aria-modal="true"
-        className="relative z-10 w-full max-w-md h-full bg-card text-card-foreground shadow-2xl border-l border-border flex flex-col transition-transform animate-in slide-in-from-right duration-250"
+        className="relative z-10 w-full max-w-md h-full bg-card text-card-foreground shadow-2xl border-l border-border flex flex-col animate-slide-in-right"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-border/80">
