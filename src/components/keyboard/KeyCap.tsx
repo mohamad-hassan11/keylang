@@ -69,18 +69,27 @@ export function KeyCap({
     .filter(Boolean)
     .join(', ');
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      (e.currentTarget as HTMLDivElement).click();
+    }
+  };
+
   return (
     <div
       role="button"
       aria-label={ariaLabel}
       data-code={definition.code}
       data-state={resolvedState}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
       style={{
         flexGrow: widthFlex,
         flexBasis: 0,
         minWidth: 0,
       }}
-      className={`relative flex flex-col justify-between items-center rounded-md border text-center transition-all select-none p-1 sm:p-1.5 h-10 sm:h-12 md:h-14 ${stateStyles[resolvedState]} ${className}`}
+      className={`relative flex flex-col justify-between items-center rounded-md border text-center transition-all select-none p-1 sm:p-1.5 h-10 sm:h-12 md:h-14 ${stateStyles[resolvedState]} ${className} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
     >
       {/* Top row: Shift label & AltGr label */}
       <div className="w-full flex justify-between items-center text-[10px] sm:text-xs leading-none">

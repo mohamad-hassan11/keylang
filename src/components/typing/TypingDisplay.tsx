@@ -107,6 +107,13 @@ export const TypingDisplay: React.FC<TypingDisplayProps> = ({
     return result;
   }, [targetGraphemes, characterStates, currentIndex]);
 
+  const handleWordKeyDown = (e: React.KeyboardEvent, wordIndex: number, word: string) => {
+    if ((e.key === 'Enter' || e.key === ' ') && onWordClick) {
+      e.preventDefault();
+      onWordClick(wordIndex, word);
+    }
+  };
+
   return (
     <div
       role="region"
@@ -143,13 +150,14 @@ export const TypingDisplay: React.FC<TypingDisplayProps> = ({
             <span
               key={tIdx}
               role="button"
-              tabIndex={-1}
+              tabIndex={0}
               onClick={(e) => {
                 e.stopPropagation();
                 onWordClick(token.wordIndex!, token.wordText!);
               }}
+              onKeyDown={(e) => handleWordKeyDown(e, token.wordIndex!, token.wordText!)}
               title={`Look up "${token.wordText}"`}
-              className="inline-block cursor-pointer hover:bg-muted/40 hover:underline hover:decoration-primary/60 rounded px-0.5 transition-colors z-10 relative"
+              className="inline-block cursor-pointer hover:bg-muted/40 hover:underline hover:decoration-primary/60 rounded px-0.5 transition-colors z-10 relative focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
               {wordSpans}
             </span>

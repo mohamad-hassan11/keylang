@@ -59,6 +59,13 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground" dir={dir}>
+      {/* Skip Link for Keyboard Navigation */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 z-50 px-4 py-2 bg-primary text-primary-foreground rounded-lg shadow-lg font-medium"
+      >
+        Skip to main content
+      </a>
       {/* Header Landmark */}
       <header className="sticky top-0 z-40 w-full border-b border-border bg-card/85 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
