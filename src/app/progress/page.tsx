@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { usePreferences } from '@/hooks/usePreferences';
 import { useProgress } from '@/hooks/useProgress';
 import { getLocaleStrings } from '@/lib/locale';
+import { TrendCharts, WeakKeysHeatmap } from '@/components/progress/ProgressCharts';
 import {
   Zap,
   Target,
@@ -18,6 +19,8 @@ import {
   History,
   Play,
   RotateCcw,
+  TrendingUp,
+  BarChart3,
 } from 'lucide-react';
 
 export default function ProgressPage() {
@@ -114,8 +117,11 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      {/* Secondary Row: Lessons & Weak Keys */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      {/* Performance Trends & Charts */}
+      <TrendCharts sessions={recentSessions} />
+
+      {/* Secondary Row: Lessons, Weak Keys, Heatmap */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Completed Lessons */}
         <Card variant="default" padding="lg">
           <CardHeader className="p-0 pb-3">
@@ -178,6 +184,9 @@ export default function ProgressPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Keyboard Error Heatmap */}
+        <WeakKeysHeatmap perKeyErrors={stats.perKeyErrors} />
       </div>
 
       {/* Recent Activity History */}
